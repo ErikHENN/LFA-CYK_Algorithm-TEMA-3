@@ -1,5 +1,4 @@
 import json
-from pprint import pprint
 
 class Stare:
     nume = ""
@@ -54,7 +53,7 @@ class AlgoCYK:
             self.tabel[1][i] = []
             for stare in self.stari:
                 if stare.preiaStareCuLitera(self.cuvant[i-1]):
-                    self.tabel[1][i].append(stare.preiaNume())#self.tabel[1][i][]
+                    self.tabel[1][i].append(stare.preiaNume())
 
     def reuniune(self, m1, m2):
         for val in m2:
@@ -67,8 +66,7 @@ class AlgoCYK:
         rezultat = []
         for m1_elem in m1:
             for m2_elem in m2:
-                elem_nou = m1_elem + m2_elem#string concat
-                #print (elem_nou)
+                elem_nou = m1_elem + m2_elem
                 if elem_nou not in rezultat:
                     rezultat.append(elem_nou)
         return rezultat
@@ -132,7 +130,7 @@ if __name__ == "__main__":
     print ('Cuvantul:' + str(cyk.preiaCuvant()) + ' ' + ('' if cyk.run() else ' NU ') + 'este acceptat')
     #cyk.afiseaza()
 
- 
+
 
 
 
