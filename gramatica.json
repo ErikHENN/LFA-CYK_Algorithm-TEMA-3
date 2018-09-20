@@ -1,0 +1,18 @@
+{
+"cuvant": "abba",
+"stari":
+  [
+    {
+    "nume": "S",
+    "drum": ["AB", "BB"]
+    },
+    {
+    "nume": "A",
+    "drum": ["a", "b", "BA"]
+    },
+    {
+    "nume" : "B",
+    "drum": ["b", "AA"]
+    }
+  ]
+}
