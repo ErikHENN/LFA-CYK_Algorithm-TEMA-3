@@ -132,7 +132,7 @@ if __name__ == "__main__":
     print ('Cuvantul:' + str(cyk.preiaCuvant()) + ' ' + ('' if cyk.run() else ' NU ') + 'este acceptat')
     #cyk.afiseaza()
 
-
+ 
 
 
 
