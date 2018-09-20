@@ -128,7 +128,9 @@ if __name__ == "__main__":
         data = json.load(f)
     cyk = AlgoCYK(data)
     print ('Cuvantul:' + str(cyk.preiaCuvant()) + ' ' + ('' if cyk.run() else ' NU ') + 'este acceptat')
-    #cyk.afiseaza()
+    cyk.afiseaza()
+
+
 
 
 
