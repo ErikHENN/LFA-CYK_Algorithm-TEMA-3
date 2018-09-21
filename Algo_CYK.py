@@ -1,11 +1,11 @@
 import json
 
 '''
-@Stare - defineste o stare a gramaticii in F.N Chomsky (ex. A->b
+@Productie - defineste o Productie a gramaticii in F.N Chomsky (ex. A->b
 '''
 
 
-class Stare:
+class Productie:
     nume = ""
     drept = []
 
@@ -20,9 +20,10 @@ class Stare:
         return self.drept
 
     '''
-    Cauta dupa o anumita stare si litera
+    Cauta dupa o anumita Productie si litera
     '''
-    def preiaStareCuLitera(self, caracter):
+    
+    def preiaProductieCuLitera(self, caracter):
         for val in self.drept:
             if caracter == val[0]:
                 return True
@@ -41,14 +42,14 @@ class Stare:
 
 
 class AlgoCYK:
-    stari = []
+    productii = []
     cuvant = ""
     tabel = {}
 
     def __init__(self, citit):
         self.cuvant = citit["cuvant"]
-        for stare in citit["stari"]:
-            self.stari.append(Stare(stare["nume"], stare["drept"]))
+        for productie in citit["productii"]:
+            self.productii.append(Productie(productie["nume"], productie["drept"]))
 
     def preiaCuvant(self):
         return self.cuvant
@@ -62,9 +63,9 @@ class AlgoCYK:
         self.tabel[1] = {}
         for i in range(1, len(self.cuvant)+1):
             self.tabel[1][i] = []
-            for stare in self.stari:
-                if stare.preiaStareCuLitera(self.cuvant[i-1]):
-                    self.tabel[1][i].append(stare.preiaNume())
+            for Productie in self.productii:
+                if Productie.preiaProductieCuLitera(self.cuvant[i-1]):
+                    self.tabel[1][i].append(Productie.preiaNume())
 
     '''
     Reuniunea a doua multimi, exemplu {A} U {B,C}
@@ -73,6 +74,7 @@ class AlgoCYK:
     @m2 - multimea 2
     @return reuniune
     '''
+    
     def reuniune(self, m1, m2):
         for val in m2:
             if val not in m1:
@@ -96,12 +98,12 @@ class AlgoCYK:
                     rezultat.append(elem_nou)
         return rezultat
 
-    def preiaStariCuLitere(self, drept):
-        stari = []
-        for stare in self.stari:
-            if stare.verificaNeterminal(drept):
-                stari.append(stare.preiaNume())
-        return stari
+    def preiaproductiiCuLitere(self, drept):
+        productii = []
+        for Productie in self.productii:
+            if Productie.verificaNeterminal(drept):
+                productii.append(Productie.preiaNume())
+        return productii
 
     '''
     Valoare pe care o calculăm este Vi j pentru cuvântul care începe la poziţia i şi are
@@ -123,7 +125,7 @@ class AlgoCYK:
             tmp = self.produs(self.tabel[k][i], self.tabel[j-k][i+k])
             rezultat[k] = []
             for val in tmp:
-                elem_nou = self.preiaStariCuLitere(val)
+                elem_nou = self.preiaproductiiCuLitere(val)
                 rezultat[k] = self.reuniune(rezultat[k], elem_nou)
             rezultat['final'] = self.reuniune(rezultat['final'], rezultat[k])
         return rezultat['final']
@@ -134,6 +136,7 @@ class AlgoCYK:
     întreg cuvântul. Dacă în această mulţime se va găsi şi simbolul de start S, înseamnă că
     cuvântul este generat de gramatică. Dacă nu, atunci nu este generat.
     '''
+
     def executa(self):
         self.Pasul1()
         for j in range(2, len(self.cuvant) + 1):
@@ -142,13 +145,14 @@ class AlgoCYK:
                 if not i + j <= len(self.cuvant) + 1:
                     break
                 self.tabel[j][i] = self.calcVij(i, j)
-        if self.stari[0].preiaNume() in self.tabel[len(self.cuvant)][1]:
+        if self.productii[0].preiaNume() in self.tabel[len(self.cuvant)][1]:
             return True
         return False
 
     '''
     Afiseaza tabelul Vij
     '''
+
     def afiseaza(self):
         print ('V(i,j)')
         for i in range(1, len(self.cuvant) + 1):
