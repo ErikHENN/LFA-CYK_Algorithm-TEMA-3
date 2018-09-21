@@ -3,34 +3,35 @@ import json
 '''
 @Stare - defineste o stare a gramaticii in F.N Chomsky (ex. A->b
 '''
+
+
 class Stare:
     nume = ""
     drept = []
-
 
     def __init__(self, nume, drept):
         self.nume = nume
         self.drept = drept
 
-
     def preiaNume(self):
         return self.nume
-
 
     def preiadrept(self):
         return self.drept
 
-    #Cauta dupa o anumita stare si litera
-
+    '''
+    Cauta dupa o anumita stare si litera
+    '''
     def preiaStareCuLitera(self, caracter):
         for val in self.drept:
             if caracter == val[0]:
                 return True
         return False
 
-
-    #Verifica daca nodul este terminal sau nu
-    #@return True / False
+    '''
+    Verifica daca nodul este terminal sau nu
+    @return True / False
+    '''
 
     def verificaNeterminal(self, nod):
         for val in self.drept:
@@ -44,20 +45,18 @@ class AlgoCYK:
     cuvant = ""
     tabel = {}
 
-
     def __init__(self, citit):
         self.cuvant = citit["cuvant"]
         for stare in citit["stari"]:
             self.stari.append(Stare(stare["nume"], stare["drept"]))
 
-
     def preiaCuvant(self):
         return self.cuvant
 
-
-
-    #Vom căuta în gramatică pentru fiecare literă mică de ce
-    #neterminale poate fi generată.
+    '''
+    Vom căuta în gramatică pentru fiecare literă mică de ce
+    neterminale poate fi generată.
+    '''
 
     def Pasul1(self):
         self.tabel[1] = {}
@@ -67,25 +66,26 @@ class AlgoCYK:
                 if stare.preiaStareCuLitera(self.cuvant[i-1]):
                     self.tabel[1][i].append(stare.preiaNume())
 
+    '''
+    Reuniunea a doua multimi, exemplu {A} U {B,C}
 
-    #Reuniunea a doua multimi, exemplu {A} U {B,C}
-
-    #@m1 - multimea 1
-    #@m2 - multimea 2
-    #@return reuniune
-
+    @m1 - multimea 1
+    @m2 - multimea 2
+    @return reuniune
+    '''
     def reuniune(self, m1, m2):
         for val in m2:
             if val not in m1:
                 m1.append(val)
         return m1
 
+    '''
+    Produsul a doua multimi, exempli {A} X {B,C}
 
-    #Produsul a doua multimi, exempli {A} X {B,C}
-
-    #@m1 - multimea 1
-    #@m2 - multimea 2
-    #@return produs
+    @m1 - multimea 1
+    @m2 - multimea 2
+    @return produs
+    '''
 
     def produs(self, m1, m2):
         rezultat = []
@@ -96,14 +96,12 @@ class AlgoCYK:
                     rezultat.append(elem_nou)
         return rezultat
 
-
     def preiaStariCuLitere(self, drept):
         stari = []
         for stare in self.stari:
             if stare.verificaNeterminal(drept):
                 stari.append(stare.preiaNume())
         return stari
-
 
     '''
     Valoare pe care o calculăm este Vi j pentru cuvântul care începe la poziţia i şi are
@@ -112,11 +110,12 @@ class AlgoCYK:
     începe la poziţia i (la fel ca întreg cuvântul) şi va avea lungime k, deci Vi k.
     A doua parte conţine restul de litere, adică j–k, şi începe cu
     k poziţii mai în dreapta faţă de cuvântul total, adică la i+k, deci avem Vi+k, j-k.
-    
+
     @i -Incepe la pozitia i
     @j - Restul de litere, j-k
     @return - Vij
     '''
+
     def calcVij(self, i, j):
         rezultat = {}
         rezultat['final'] = []
@@ -137,7 +136,7 @@ class AlgoCYK:
     '''
     def executa(self):
         self.Pasul1()
-        for j in range(2,len(self.cuvant) + 1):
+        for j in range(2, len(self.cuvant) + 1):
             self.tabel[j] = {}
             for i in range(1, len(self.cuvant) + 1):
                 if not i + j <= len(self.cuvant) + 1:
@@ -173,11 +172,3 @@ if __name__ == "__main__":
     cyk = AlgoCYK(data)
     print ('Cuvantul:' + str(cyk.preiaCuvant()) + ' ' + ('' if cyk.executa() else ' NU ') + 'este acceptat')
     cyk.afiseaza()
-
-
-
-
-
-
-
-
