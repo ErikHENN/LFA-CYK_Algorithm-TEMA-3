@@ -4,15 +4,15 @@
   [
     {
     "nume": "S",
-    "drum": ["AB", "BB"]
+    "drept": ["AB", "BB"]
     },
     {
     "nume": "A",
-    "drum": ["a", "b", "BA"]
+    "drept": ["a", "b", "BA"]
     },
     {
     "nume" : "B",
-    "drum": ["b", "AA"]
+    "drept": ["b", "AA"]
     }
   ]
 }

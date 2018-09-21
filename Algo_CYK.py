@@ -1,31 +1,40 @@
 import json
 
+'''
+@Stare - defineste o stare a gramaticii in F.N Chomsky (ex. A->b
+'''
 class Stare:
     nume = ""
-    drum = []
+    drept = []
 
 
-    def __init__(self, nume, drum):
+    def __init__(self, nume, drept):
         self.nume = nume
-        self.drum = drum
+        self.drept = drept
 
 
     def preiaNume(self):
         return self.nume
 
 
-    def preiaDrum(self):
-        return self.drum
+    def preiadrept(self):
+        return self.drept
 
-
+'''
+Cauta dupa o anumita stare si litera
+'''
     def preiaStareCuLitera(self, caracter):
-        for val in self.drum:
+        for val in self.drept:
             if caracter == val[0]:
                 return True
         return False
 
+'''
+Verifica daca nodul este terminal sau nu
+@return True / False
+'''
     def verificaNeterminal(self, nod):
-        for val in self.drum:
+        for val in self.drept:
             if val == nod:
                 return True
         return False
@@ -40,13 +49,17 @@ class AlgoCYK:
     def __init__(self, citit):
         self.cuvant = citit["cuvant"]
         for stare in citit["stari"]:
-            self.stari.append(Stare(stare["nume"], stare["drum"]))
+            self.stari.append(Stare(stare["nume"], stare["drept"]))
 
 
     def preiaCuvant(self):
         return self.cuvant
 
 
+'''
+Vom căuta în gramatică pentru fiecare literă mică de ce
+neterminale poate fi generată.
+'''
     def Pasul1(self):
         self.tabel[1] = {}
         for i in range(1, len(self.cuvant)+1):
@@ -55,13 +68,26 @@ class AlgoCYK:
                 if stare.preiaStareCuLitera(self.cuvant[i-1]):
                     self.tabel[1][i].append(stare.preiaNume())
 
+'''
+Reuniunea a doua multimi, exempli {A} U {B,C}
+
+@m1 - multimea 1
+@m2 - multimea 2
+@return reuniune
+'''
     def reuniune(self, m1, m2):
         for val in m2:
             if val not in m1:
                 m1.append(val)
         return m1
 
+'''
+Produsul a doua multimi, exempli {A} X {B,C}
 
+@m1 - multimea 1
+@m2 - multimea 2
+@return produs
+'''
     def produs(self, m1, m2):
         rezultat = []
         for m1_elem in m1:
@@ -72,13 +98,26 @@ class AlgoCYK:
         return rezultat
 
 
-    def preiaStariCuLitere(self, drum):
+    def preiaStariCuLitere(self, drept):
         stari = []
         for stare in self.stari:
-            if stare.verificaNeterminal(drum):
+            if stare.verificaNeterminal(drept):
                 stari.append(stare.preiaNume())
         return stari
 
+
+'''
+Valoare pe care o calculăm este Vi j pentru cuvântul care începe la poziţia i şi are
+lungimea j.
+Prima parte conţine primele k litere din cuvânt. Deci va
+începe la poziţia i (la fel ca întreg cuvântul) şi va avea lungime k, deci Vi k.
+A doua parte conţine restul de litere, adică j–k, şi începe cu
+k poziţii mai în dreapta faţă de cuvântul total, adică la i+k, deci avem Vi+k, j-k.
+
+@i -Incepe la pozitia i
+@j - Restul de litere, j-k
+@return - Vij
+'''
     def calcVij(self, i, j):
         rezultat = {}
         rezultat['final'] = []
@@ -91,8 +130,13 @@ class AlgoCYK:
             rezultat['final'] = self.reuniune(rezultat['final'], rezultat[k])
         return rezultat['final']
 
-
-    def run(self):
+'''
+Răspunsul final pe care îl căutăm este V1, |w| adică mulţimea de neterminale din care
+putem genera cuvântul dat începând de pe prima poziţie şi având lungimea egală cu
+întreg cuvântul. Dacă în această mulţime se va găsi şi simbolul de start S, înseamnă că
+cuvântul este generat de gramatică. Dacă nu, atunci nu este generat.
+'''
+    def executa(self):
         self.Pasul1()
         for j in range(2,len(self.cuvant) + 1):
             self.tabel[j] = {}
@@ -104,7 +148,9 @@ class AlgoCYK:
             return True
         return False
 
-
+'''
+Afiseaza tabelul Vij
+'''
     def afiseaza(self):
         print ('V(i,j)')
         for i in range(1, len(self.cuvant) + 1):
@@ -127,7 +173,7 @@ if __name__ == "__main__":
     with open('gramatica.json') as f:
         data = json.load(f)
     cyk = AlgoCYK(data)
-    print ('Cuvantul:' + str(cyk.preiaCuvant()) + ' ' + ('' if cyk.run() else ' NU ') + 'este acceptat')
+    print ('Cuvantul:' + str(cyk.preiaCuvant()) + ' ' + ('' if cyk.executa() else ' NU ') + 'este acceptat')
     cyk.afiseaza()
 
 
